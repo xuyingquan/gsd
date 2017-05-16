@@ -1,0 +1,6 @@
+RegionA:
+  - name: baidu
+    cname: www.baidu.com
+
+华东大区:
+  - cname: hd.shatacloud.com

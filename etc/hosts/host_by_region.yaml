@@ -1,0 +1,15 @@
+"test.shatacloud.com":
+  record: A
+  ttl: 60
+  loadbalance: policy
+  policy: 性能优先
+  ipkey: pub
+  max: 4
+  label:
+    channel: test
+
+"cname.test.shatacloud.com":
+  record: CNAME
+  ttl: 60
+  loadbalance: policy
+  policy: 区域调度

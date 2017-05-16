@@ -1,0 +1,3 @@
+redis: true
+redisAddr: "172.30.40.193:6379"
+redisPass: ""

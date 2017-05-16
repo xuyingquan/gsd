@@ -1,0 +1,8 @@
+"okey.com":
+  origin: okey.com
+  soa: "aaa.com 500 IN SOA ns1.aaa.com. root.aaa.com.  42 3600 3600 360000 60"
+  ns:
+    - name: ns1.okey.com
+      ip: 1.1.1.1
+    - name: ns2.okey.com
+      ip: 1.1.1.2

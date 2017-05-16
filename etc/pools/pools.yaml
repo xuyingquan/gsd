@@ -1,0 +1,37 @@
+dc1:
+    - name: dc1-cce1
+      ip:
+        priv: 10.0.0.1
+        pub: 11.0.0.1
+      weight: 2
+    - name: dc1-cce2
+      ip:
+        priv: 10.0.0.2
+        pub: 11.0.0.2
+      weight: 3
+    - name: dc1-cce3
+      ip:
+        priv: 10.0.0.3
+        pub: 11.0.0.3
+    - name: dc1-cce4
+      ip:
+        priv: 10.0.0.4
+        pub: 11.0.0.4
+dc2:
+    - name: dc2-cce1
+      ip:
+        priv: 10.0.1.1
+        pub: 11.0.1.1
+    - name: dc2-cce2
+      ip:
+        priv: 10.0.1.2
+        pub: 11.0.1.2
+    - name: dc2-cce3
+      ip:
+        priv: 10.0.1.3
+        pub: 11.0.1.3
+    - name: dc2-cce4
+      ip:
+        priv: 10.0.1.4
+        pub: 11.0.1.4
+      cname: cce4.dc2.shatacloud.com

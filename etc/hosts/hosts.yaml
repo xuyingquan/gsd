@@ -1,0 +1,71 @@
+".pub.zqlive":
+    record: A
+    ttl: 10
+    target:
+        - pool: dc1
+        - pool: dc2
+    ipkey: pub
+    loadbalance: consistent_hash
+    hashkeyignore: ".pub"
+
+".priv.zqlive":
+    record: A
+    ttl: 10
+    target:
+        - pool: dc1
+        - pool: dc2
+    ipkey: priv
+    loadbalance: consistent_hash
+    hashkeyignore: ".priv"
+    nsrecords:
+      - ns1.priv.zqlive
+
+"random.shata.com":
+  record: A
+  ttl: 20
+  target:
+    - pool: dc1
+    - pool: dc2
+  ipkey: priv
+  loadbalance: random
+  max: 1
+
+
+"all.shata.com":
+  record: A
+  ttl: 20
+  target:
+    - pool: dc1
+    - pool: dc2
+  ipkey: priv
+  loadbalance: all
+  max: 1
+
+"sp1.cname.com":
+    record: CNAME
+    ttl: 100
+    loadbalance: all
+    max: 1
+    target:
+        -pool: RegionA
+
+".sdn":
+    record: A
+    ttl: 10
+    loadbalance: sdn_api
+    regex: "(.+)\\.sdn"
+    apiurl: "http://127.0.0.1:10001/push?ip=$remoteIp&app=sdn&instance=$1"
+
+".app1.push":
+    record: A
+    ttl: 10
+    loadbalance: sdn_api
+    regex: "(.+)\\.app1\\.push"
+    apiurl: "http://192.168.56.80/sdn/other/ask/next/push?ip=$remoteIp&app=app1&instance=$1"
+
+".app1.pull":
+    record: A
+    ttl: 10
+    loadbalance: sdn_api
+    regex: "(.+)\\.app1\\.pull"
+    apiurl: "http://192.168.56.80/sdn/other/ask/next/pull?ip=$remoteIp&instance=$1&app=app1"

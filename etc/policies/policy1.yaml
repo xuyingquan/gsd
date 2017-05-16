@@ -1,0 +1,19 @@
+性能优先:
+  中国/上海市@中国电信:
+    - pool: 嘉兴电信
+      weight: 2
+    - pool: 杭州电信
+      weight: 1
+  中国/浙江省@中国电信:
+    - pool: 嘉兴电信
+  中国/上海市@中国联通:
+    - pool: dc1
+  default@中国电信:
+    - pool: 嘉兴电信
+  default@default:
+    - pool: 杭州电信
+区域调度:
+  中国/上海市@中国电信:
+    - pool: 华东大区
+  default@default:
+    - pool: 华东大区

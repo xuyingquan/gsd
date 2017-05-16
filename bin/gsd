@@ -1,0 +1,108 @@
+#!/bin/sh
+
+PRGNAME="GSD"
+PRGBIN="gsd.bin"
+
+export LOGXI=*=INF
+export LOGXI_FORMAT=json
+# resolve links - $0 may be a softlink
+PRG="$0"
+
+while [ -h "$PRG" ]; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=`dirname "$PRG"`/"$link"
+  fi
+done
+
+# Get standard environment variables
+PRGDIR=`dirname "$PRG"`
+cd $PRGDIR
+cd ..
+PRGHOME=`pwd`
+LOGDIR="$PRGHOME/logs/$PRGBIN.out"
+PRGPID="$PRGHOME/$PRGBIN.pid"
+
+if [ "$1" = "run" ] ; then
+  if [ ! -z "$PRGPID" ]; then
+    if [ -f "$PRGPID" ]; then
+      echo "PID file ($PRGPID) found. Is $PRGNAME still running? Start aborted."
+      exit 1
+    fi
+  fi
+
+  shift
+  exec "$PRGHOME/bin/$PRGBIN" "$@"
+elif [ "$1" = "start" ] ; then
+  shift
+  touch "$LOGDIR"
+  exec "$PRGHOME/bin/$PRGBIN" "$@" \
+  >> "$LOGDIR" 2>&1 &
+  if [ ! -z "$PRGPID" ]; then
+    echo $! > $PRGPID
+  fi
+elif [ "$1" = "reload" ] ; then
+  if [ ! -z "$PRGPID" ]; then
+    if [ -f "$PRGPID" ]; then
+      kill -0 `cat $PRGPID` >/dev/null 2>&1
+      if [ $? -gt 0 ]; then
+        echo "PID file ($PRGPID) found but no matching process was found. Reload aborted."
+        exit 1
+      fi
+    else
+      echo "($PRGPID) file does not exist. Is $PRGNAME running? Reload aborted."
+      exit 1
+    fi
+  fi
+  kill -HUP `cat $PRGPID`
+  echo "send reload signl to $PRGNAME success."
+elif [ "$1" = "stop" ] ; then
+  SLEEP=5
+  if [ ! -z "$PRGPID" ]; then
+    if [ -f "$PRGPID" ]; then
+      kill -0 `cat $PRGPID` >/dev/null 2>&1
+      if [ $? -gt 0 ]; then
+        echo "PID file ($PRGPID) found but no matching process was found. Stop aborted."
+        exit 1
+      fi
+    else
+      echo "($PRGPID) file does not exist. Is $PRGNAME running? Stop aborted."
+      exit 1
+    fi
+  fi
+  kill `cat $PRGPID` > /dev/null 2>&1
+  if [ ! -z "$PRGPID" ]; then
+    if [ -f "$PRGPID" ]; then
+      while [ $SLEEP -ge 0 ]; do
+        kill -0 `cat $PRGPID` >/dev/null 2>&1
+        if [ $? -gt 0 ]; then
+          rm $PRGPID
+          echo "$PRGNAME stoped"
+          break
+        fi
+        if [ $SLEEP -gt 0 ]; then
+          sleep 1
+        fi
+        if [ $SLEEP -eq 0 ]; then
+           echo "$PRGNAME did not stop in time. PID file was not removed."
+        fi
+        SLEEP=`expr $SLEEP - 1 `
+      done
+    fi
+  fi
+elif [ "$1" = "version" ] ; then
+
+  exec "$PRGHOME/bin/$PRGBIN" "-v"
+
+else
+  echo "Usage: $PRGNAME ( commands ... )"
+  echo "commands:"
+  echo "  run               Start $PRGNAME in the current window"
+  echo "  start             Start $PRGNAME in a separate window"
+  echo "  stop              Stop $PRGNAME, waitting 5 second to finish"
+  echo "  version           What version of tomcat are you running?"
+  exit 1
+fi
